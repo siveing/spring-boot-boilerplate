@@ -1,4 +1,4 @@
-# BikTech Banking Boilerplate
+# Spring Boot Boilerplate
 
 This project demonstrates a Spring Boot application with a modular architecture, JWT security (RBAC), and OpenAPI documentation.
 
