@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.MDC;
 
 @Data
 @Builder
@@ -14,6 +15,11 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Standard API response wrapper")
 public class ApiResponse<T> {
+
+  @Schema(description = "Co Relation Id")
+  @Builder.Default()
+  private String correlationId = MDC.get("correlationId");
+
   @Schema(description = "Indicates if the operation was successful", example = "true")
   private boolean success;
 
