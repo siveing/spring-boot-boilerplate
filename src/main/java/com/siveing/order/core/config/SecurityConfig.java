@@ -13,6 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.POST;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity // Enables @PreAuthorize
@@ -22,23 +24,23 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
 
+  private static final String[] WHITE_LIST_URL = {
+      "/api/v1/auth/**",
+      "/api/v1/role/**",
+      "/v3/api-docs/**",
+      "/swagger-ui/**",
+      "/swagger-ui.html",
+      "/api/v1/health",
+      "/api/v1/health/failed"
+  };
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers(
-                "/api/v1/auth/**",
-                "/v3/api-docs/**",
-                "/swagger-ui/**",
-                "/swagger-ui.html",
-                "/api/v1/health",
-                "/api/v1/health/failed"
-            ).permitAll()
-            // RBAC: Admin only endpoints
-            .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-            .requestMatchers("/api/v1/demo/admin-only").hasRole("ADMIN")
-            // All other endpoints require authentication
+            // WHITE LIST
+            .requestMatchers(WHITE_LIST_URL).permitAll()
             .anyRequest().authenticated()
         )
         .sessionManagement(sess -> sess

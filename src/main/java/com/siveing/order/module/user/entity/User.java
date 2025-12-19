@@ -1,5 +1,6 @@
 package com.siveing.order.module.user.entity;
 
+import com.siveing.order.module.role.entity.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,30 +12,36 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_user")
+@Table(name = "_user")
 public class User implements UserDetails {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+
   private String firstname;
+
   private String lastname;
+
   @Column(unique = true)
   private String email;
+
   private String password;
 
-  @Enumerated(EnumType.STRING)
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "role_id")
   private Role role;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    return List.of(new SimpleGrantedAuthority(role.getName()));
   }
 
   @Override
